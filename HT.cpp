@@ -16,10 +16,10 @@ int32_t HT_Read(float &humidity, float &temperature)
   HumTemp.GetTemperature(&temperature);
 
   // Output data.
-  Serial.print("Hum[%]: ");
-  Serial.print(humidity, 2);
-  Serial.print(" | Temp[C]: ");
-  Serial.println(temperature, 2);
+  // Serial.print("Hum[%]: ");
+  // Serial.print(humidity, 2);
+  // Serial.print(" | Temp[C]: ");
+  // Serial.println(temperature, 2);
 
   return 0;
 }
