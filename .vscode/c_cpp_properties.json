@@ -22,7 +22,7 @@
             ],
             "intelliSenseMode": "gcc-x64",
             "includePath": [
-                "/home/jack/Documents/stm32_rosserial",
+                "/run/user/1000/gvfs/sftp:host=archlab,port=9527/home/jack/Documents/stm32_rosserial",
                 "/home/jack/.arduino15/packages/STMicroelectronics/hardware/stm32/2.0.0/cores/arduino/avr",
                 "/home/jack/.arduino15/packages/STMicroelectronics/hardware/stm32/2.0.0/cores/arduino/stm32",
                 "/home/jack/.arduino15/packages/STMicroelectronics/hardware/stm32/2.0.0/cores/arduino/stm32/LL",
@@ -53,7 +53,6 @@
                 "/home/jack/Arduino/libraries/STM32duino_HTS221/src",
                 "/home/jack/Arduino/libraries/STM32duino_LSM6DSL/src",
                 "/home/jack/Arduino/libraries/STM32duino_LIS3MDL/src",
-                "/home/jack/Arduino/libraries/MicroNMEA/src",
                 "/home/jack/.arduino15/packages/STMicroelectronics/hardware/stm32/2.0.0/libraries/SrcWrapper/src",
                 "/home/jack/.arduino15/packages/STMicroelectronics/tools/xpack-arm-none-eabi-gcc/9.3.1-1.3/arm-none-eabi/include/c++/9.3.1",
                 "/home/jack/.arduino15/packages/STMicroelectronics/tools/xpack-arm-none-eabi-gcc/9.3.1-1.3/arm-none-eabi/include/c++/9.3.1/arm-none-eabi",
@@ -70,7 +69,7 @@
             "defines": [
                 "USE_FULL_LL_DRIVER",
                 "STM32L4xx",
-                "ARDUINO=10816",
+                "ARDUINO=10815",
                 "ARDUINO_B_L475E_IOT01A",
                 "ARDUINO_ARCH_STM32",
                 "BOARD_NAME=\"B_L475E_IOT01A\"",
