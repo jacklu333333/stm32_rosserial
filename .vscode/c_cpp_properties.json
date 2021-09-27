@@ -22,7 +22,7 @@
             ],
             "intelliSenseMode": "gcc-x64",
             "includePath": [
-                "/run/user/1000/gvfs/sftp:host=archlab,port=9527/home/jack/Documents/stm32_rosserial",
+                "/home/jack/Documents/stm32_rosserial",
                 "/home/jack/.arduino15/packages/STMicroelectronics/hardware/stm32/2.0.0/cores/arduino/avr",
                 "/home/jack/.arduino15/packages/STMicroelectronics/hardware/stm32/2.0.0/cores/arduino/stm32",
                 "/home/jack/.arduino15/packages/STMicroelectronics/hardware/stm32/2.0.0/cores/arduino/stm32/LL",
@@ -69,7 +69,7 @@
             "defines": [
                 "USE_FULL_LL_DRIVER",
                 "STM32L4xx",
-                "ARDUINO=10815",
+                "ARDUINO=10816",
                 "ARDUINO_B_L475E_IOT01A",
                 "ARDUINO_ARCH_STM32",
                 "BOARD_NAME=\"B_L475E_IOT01A\"",

@@ -18,7 +18,8 @@
 #define I2C2_SCL PB10
 #define I2C2_SDA PB11
 
-#define SerialSpeed 57600
+#define SerialSpeed 2000000
+#define FRAME_ID "stm32"
 
 TwoWire dev_i2c(I2C2_SDA, I2C2_SCL);
 
@@ -44,6 +45,10 @@ ros::Publisher IMU_Mag("imu/mag", &imu_mag_msg);
 
 // GPS
 
+void MSG_setup(){
+    imu_imu_msg.header.frame_id = FRAME_ID;
+    imu_mag_msg.header.frame_id = FRAME_ID;
+}
 void setup()
 {
     pinMode(LED_BUILTIN, OUTPUT);
@@ -53,6 +58,8 @@ void setup()
     dev_i2c.begin();
 
     nh.initNode();
+    Serial.begin(SerialSpeed);
+    
     // Baro
     nh.advertise(Baro_Press);
     nh.advertise(Baro_Temp);
@@ -67,19 +74,19 @@ void setup()
     // Mag
     nh.advertise(IMU_Mag);
 
-    Serial.println("\nSetting up Baro ...");
-    while (Baro_Setup() != 0)
-    {
-        delay(500);
-        Serial.print(".");
-    }
+    // Serial.println("\nSetting up Baro ...");
+    // while (Baro_Setup() != 0)
+    // {
+    //     delay(500);
+    //     Serial.print(".");
+    // }
 
-    Serial.println("\nSetting up HT ...");
-    while (HT_Setup() != 0)
-    {
-        delay(500);
-        Serial.print(".");
-    }
+    // Serial.println("\nSetting up HT ...");
+    // while (HT_Setup() != 0)
+    // {
+    //     delay(500);
+    //     Serial.print(".");
+    // }
 
     Serial.println("\nSetting up Imu ...");
     while (Imu_Setup() != 0)
@@ -94,6 +101,7 @@ void setup()
         delay(500);
         Serial.print(".");
     }
+    MSG_setup();
 }
 
 void loop()
@@ -104,25 +112,30 @@ void loop()
     int32_t acc[3], gyr[3], mag[3];
     char nmeaStr[100];
 
-    // Baro
-    if (Baro_Read(baro_press_msg.data, baro_temp_msg.data) != 0)
-        Serial.println("pressure sensor went wrong !");
-    else
-        Baro_Press.publish(&baro_press_msg);
-    Baro_Temp.publish(&baro_temp_msg);
+    // // Baro
+    // if (Baro_Read(baro_press_msg.data, baro_temp_msg.data) != 0)
+    //     Serial.println("pressure sensor went wrong !");
+    // else
+    //     Baro_Press.publish(&baro_press_msg);
+    // Baro_Temp.publish(&baro_temp_msg);
 
-    // HT
-    if (HT_Read(humidity, temperatureH) != 0)
-        Serial.println("humidity sensor sent wrong !");
-    else
-        HT_Humidity.publish(&ht_humidity_msg);
-    HT_Temp.publish(&ht_temp_msg);
+    // // HT
+    // if (HT_Read(humidity, temperatureH) != 0)
+    //     Serial.println("humidity sensor sent wrong !");
+    // else
+    //     HT_Humidity.publish(&ht_humidity_msg);
+    // HT_Temp.publish(&ht_temp_msg);
 
     // IMU
     if (Imu_Read(&imu_imu_msg) != 0)
+    {
         Serial.println("IMU sensor sent wrong !");
+    }
     else
+    {
+        imu_imu_msg.header.stamp = nh.now();
         IMU_6DOF.publish(&imu_imu_msg);
+    }
 
     // imu_mag_msg.magnetic_field.x
     // MAG
@@ -132,6 +145,7 @@ void loop()
     }
     else
     {
+        imu_mag_msg.header.stamp = nh.now();
         IMU_Mag.publish(&imu_mag_msg);
     }
 
