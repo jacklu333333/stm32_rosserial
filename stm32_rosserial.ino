@@ -1,6 +1,4 @@
 #include <ros.h>
-#include <std_msgs/Float32.h>
-#include <std_msgs/String.h>
 
 #include <sensor_msgs/FluidPressure.h>
 #include <sensor_msgs/Temperature.h>
@@ -26,26 +24,32 @@ TwoWire dev_i2c(I2C2_SDA, I2C2_SCL);
 // ROS
 ros::NodeHandle nh;
 // Baro
-std_msgs::Float32 baro_press_msg;
-std_msgs::Float32 baro_temp_msg;
-ros::Publisher Baro_Press("baro/pressure", &baro_press_msg);
-ros::Publisher Baro_Temp("baro/temperature", &baro_temp_msg);
+sensor_msgs::FluidPressure baro_press_msg;
+sensor_msgs::Temperature baro_temp_msg;
+ros::Publisher Baro_Press("/stm32/baro/pressure", &baro_press_msg);
+ros::Publisher Baro_Temp("/stm32/baro/temperature", &baro_temp_msg);
 // HT
-std_msgs::Float32 ht_humidity_msg;
-std_msgs::Float32 ht_temp_msg;
-ros::Publisher HT_Humidity("ht/humidity", &ht_humidity_msg);
-ros::Publisher HT_Temp("ht/temperature", &ht_temp_msg);
+sensor_msgs::RelativeHumidity ht_humidity_msg;
+sensor_msgs::Temperature ht_temp_msg;
+ros::Publisher HT_Humidity("/stm32/ht/humidity", &ht_humidity_msg);
+ros::Publisher HT_Temp("/stm32/ht/temperature", &ht_temp_msg);
 // Imu
 sensor_msgs::Imu imu_imu_msg;
-ros::Publisher IMU_6DOF("imu/imu", &imu_imu_msg);
+ros::Publisher IMU_6DOF("/stm32/imu", &imu_imu_msg);
 
 // Mag
 sensor_msgs::MagneticField imu_mag_msg;
-ros::Publisher IMU_Mag("imu/mag", &imu_mag_msg);
+ros::Publisher IMU_Mag("/stm32/mag", &imu_mag_msg);
 
 // GPS
 
-void MSG_setup(){
+void MSG_setup()
+{
+    ht_humidity_msg.header.frame_id = FRAME_ID;
+    ht_temp_msg.header.frame_id = FRAME_ID;
+    baro_press_msg.header.frame_id = FRAME_ID;
+    baro_temp_msg.header.frame_id = FRAME_ID;
+
     imu_imu_msg.header.frame_id = FRAME_ID;
     imu_mag_msg.header.frame_id = FRAME_ID;
 }
@@ -59,7 +63,7 @@ void setup()
 
     nh.initNode();
     Serial.begin(SerialSpeed);
-    
+
     // Baro
     nh.advertise(Baro_Press);
     nh.advertise(Baro_Temp);
@@ -74,19 +78,19 @@ void setup()
     // Mag
     nh.advertise(IMU_Mag);
 
-    // Serial.println("\nSetting up Baro ...");
-    // while (Baro_Setup() != 0)
-    // {
-    //     delay(500);
-    //     Serial.print(".");
-    // }
+    Serial.println("\nSetting up Baro ...");
+    while (Baro_Setup() != 0)
+    {
+        delay(500);
+        Serial.print(".");
+    }
 
-    // Serial.println("\nSetting up HT ...");
-    // while (HT_Setup() != 0)
-    // {
-    //     delay(500);
-    //     Serial.print(".");
-    // }
+    Serial.println("\nSetting up HT ...");
+    while (HT_Setup() != 0)
+    {
+        delay(500);
+        Serial.print(".");
+    }
 
     Serial.println("\nSetting up Imu ...");
     while (Imu_Setup() != 0)
@@ -106,26 +110,41 @@ void setup()
 
 void loop()
 {
+    static unsigned long preTime = millis();
     int32_t result = 0;
     float pressure = 123.0, temperatureP = 456.0;
     float humidity, temperatureH;
     int32_t acc[3], gyr[3], mag[3];
     char nmeaStr[100];
 
-    // // Baro
-    // if (Baro_Read(baro_press_msg.data, baro_temp_msg.data) != 0)
-    //     Serial.println("pressure sensor went wrong !");
-    // else
-    //     Baro_Press.publish(&baro_press_msg);
-    // Baro_Temp.publish(&baro_temp_msg);
+    if (millis() - preTime > 100)
+    {
+        //        Serial.println(millis() - preTime);/
+        preTime = millis();
+        // Baro
+        if (Baro_Read(&baro_press_msg, &baro_temp_msg) != 0)
+        {
+            Serial.println("pressure sensor went wrong !");
+        }
+        else
+        {
+            baro_temp_msg.header.stamp = baro_press_msg.header.stamp = nh.now();
+            Baro_Press.publish(&baro_press_msg);
+        }
+        Baro_Temp.publish(&baro_temp_msg);
 
-    // // HT
-    // if (HT_Read(humidity, temperatureH) != 0)
-    //     Serial.println("humidity sensor sent wrong !");
-    // else
-    //     HT_Humidity.publish(&ht_humidity_msg);
-    // HT_Temp.publish(&ht_temp_msg);
-
+        // HT
+        if (HT_Read(&ht_humidity_msg, &ht_temp_msg) != 0)
+        {
+            Serial.println("humidity sensor sent wrong !");
+        }
+        else
+        {
+            ht_temp_msg.header.stamp =ht_humidity_msg.header.stamp = nh.now();
+            HT_Humidity.publish(&ht_humidity_msg);
+        }
+        HT_Temp.publish(&ht_temp_msg);
+    }
     // IMU
     if (Imu_Read(&imu_imu_msg) != 0)
     {
@@ -145,10 +164,11 @@ void loop()
     }
     else
     {
-        imu_mag_msg.header.stamp = nh.now();
+        imu_mag_msg.header.stamp = imu_imu_msg.header.stamp;
         IMU_Mag.publish(&imu_mag_msg);
     }
 
     // auto temp_msg = boost::make_shared<sensor_msgs::Temperature>();
+    delay(3);
     nh.spinOnce();
 }

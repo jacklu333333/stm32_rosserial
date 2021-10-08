@@ -124,7 +124,7 @@ void sendCommand(char *cmd)
 
 void setup(void)
 {
-   console.begin(115200); // console
+   console.begin(921600); // console
    gps.begin(); // gps
 
    pinMode(LED_BUILTIN, OUTPUT);

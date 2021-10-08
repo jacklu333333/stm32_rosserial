@@ -9,11 +9,16 @@ int32_t HT_Setup()
   return 0;
 }
 
-int32_t HT_Read(float &humidity, float &temperature)
+int32_t HT_Read(sensor_msgs::RelativeHumidity *humidity, sensor_msgs::Temperature *temperature)
 {
+  float tempH = 0.0;
+  float tempT = 0.0;
   // Read humidity and temperature.
-  HumTemp.GetHumidity(&humidity);
-  HumTemp.GetTemperature(&temperature);
+  HumTemp.GetHumidity(&tempH);
+  HumTemp.GetTemperature(&tempT);
+
+  humidity->relative_humidity = tempH / 100;
+  temperature->temperature = tempT;
 
   // Output data.
   // Serial.print("Hum[%]: ");
