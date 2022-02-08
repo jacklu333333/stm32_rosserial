@@ -6,7 +6,7 @@
 #define __HUMIDITY_
 
 extern TwoWire dev_i2c;
-extern HTS221Sensor  HumTemp;
+extern HTS221Sensor HumTemp;
 
 int32_t HT_Setup();
 int32_t HT_Read(sensor_msgs::RelativeHumidity *humidity, sensor_msgs::Temperature *temperature);

@@ -16,8 +16,12 @@
 #define I2C2_SCL PB10
 #define I2C2_SDA PB11
 
+// #define SerialSpeed 115200
+// #define SerialSpeed 576000
+// #define SerialSpeed 921600
 #define SerialSpeed 2000000
-#define FRAME_ID "stm32"
+
+#define FRAME_ID "stm32_link"
 
 TwoWire dev_i2c(I2C2_SDA, I2C2_SCL);
 

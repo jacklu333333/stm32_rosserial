@@ -1,5 +1,5 @@
 {
-    "configuration": "pnum=B_L475E_IOT01A,upload_method=MassStorage,xserial=generic,usb=CDCgen,xusb=FS,opt=osstd,rtlib=nano",
+    "configuration": "pnum=B_L475E_IOT01A,upload_method=MassStorage,xserial=generic,usb=CDCgen,xusb=FS,opt=osstd,dbg=none,rtlib=nano",
     "board": "STMicroelectronics:stm32:Disco",
     "sketch": "stm32_rosserial.ino",
     "port": "/dev/ttyACM0"
